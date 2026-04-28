@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart';
+
+class OrdersPage extends StatelessWidget {
+  const OrdersPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Pesanan Saya")),
+      body: const Center(
+        child: Text("Halaman Riwayat Pesanan", style: TextStyle(fontSize: 18)),
+      ),
+    );
+  }
+}
