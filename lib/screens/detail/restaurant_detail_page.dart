@@ -1,37 +1,44 @@
 import 'package:flutter/material.dart';
-import '../../../models/restaurant_model.dart';
-import '../../../models/food_model.dart';
-import '../checkout/checkout_page.dart';
+// PENTING: Sesuaikan 3 baris import di bawah ini dengan nama folder di project Anda!
+import '../../models/restaurant_model.dart';
+import '../../models/food_model.dart';
+import '../checkout/checkout_page.dart'; // Sesuaikan path menuju file CheckoutPage
 
 class RestaurantDetailPage extends StatefulWidget {
   final RestaurantModel restaurant;
-  const RestaurantDetailPage({super.key, required this.restaurant});
+
+  const RestaurantDetailPage({Key? key, required this.restaurant})
+    : super(key: key);
 
   @override
   State<RestaurantDetailPage> createState() => _RestaurantDetailPageState();
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
-  // FITUR UTAMA: Map untuk menyimpan berbagai jenis makanan yang berbeda
+  // Map untuk menyimpan pesanan di keranjang
   final Map<FoodModel, int> _cart = {};
 
+  // Fungsi untuk menambah/mengurangi pesanan
   void _updateCart(FoodModel food, int change) {
     setState(() {
       if (_cart.containsKey(food)) {
         _cart[food] = _cart[food]! + change;
-        if (_cart[food]! <= 0) _cart.remove(food);
-      } else if (change > 0) {
-        _cart[food] = change;
+        if (_cart[food]! <= 0) {
+          _cart.remove(food);
+        }
+      } else {
+        if (change > 0) {
+          _cart[food] = change;
+        }
       }
     });
   }
 
-  // Menghitung total harga semua jenis makanan di keranjang
-  int get _totalPrice {
+  // Menghitung total item di keranjang
+  int get _totalItems {
     int total = 0;
-    _cart.forEach((food, qty) {
-      int price = int.parse(food.price.replaceAll(RegExp(r'[^0-9]'), ''));
-      total += price * qty;
+    _cart.forEach((key, value) {
+      total += value;
     });
     return total;
   }
@@ -39,41 +46,50 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF121212), // Tema gelap aplikasi
       body: CustomScrollView(
         slivers: [
-          // Di dalam class RestaurantDetailPage...
-          // Pastikan variabel restaurant yang dipanggil adalah objek yang dikirim dari Home
+          // --- 1. BAGIAN HEADER GAMBAR RESTORAN ---
           SliverAppBar(
             expandedHeight: 250,
             pinned: true,
+            backgroundColor: const Color(0xFF1E1E1E),
+            iconTheme: const IconThemeData(color: Colors.white),
             flexibleSpace: FlexibleSpaceBar(
-              // PERBAIKAN: Pastikan menggunakan Image.asset dan variabel yang tepat
+              title: Text(
+                widget.restaurant.name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  shadows: [Shadow(color: Colors.black, blurRadius: 10)],
+                ),
+              ),
               background: Image.asset(
-                widget
-                    .restaurant
-                    .image, // Pastikan memanggil variabel 'image' dari model restoran
+                widget.restaurant.image,
                 fit: BoxFit.cover,
+                // Exception handling jika gambar gagal dimuat
                 errorBuilder: (context, error, stackTrace) {
-                  // Ini untuk berjaga-jaga jika gambar gagal muat
                   return Container(
                     color: Colors.grey[900],
-                    child: const Icon(
-                      Icons.broken_image,
-                      color: Colors.white,
-                      size: 50,
+                    child: const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: Colors.amber,
+                        size: 50,
+                      ),
                     ),
                   );
                 },
               ),
             ),
           ),
+
+          // --- 2. BAGIAN DAFTAR MENU ---
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               final food = widget.restaurant.menu[index];
               final qty = _cart[food] ?? 0;
 
-              // Di dalam SliverChildBuilderDelegate
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 padding: const EdgeInsets.all(12),
@@ -83,16 +99,15 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 ),
                 child: Row(
                   children: [
-                    // --- PERBAIKAN START: Container Gambar yang Seragam ---
+                    // PERBAIKAN: Gambar Menu Rapi (Tidak Overflow)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: SizedBox(
-                        width: 100, // Tentukan lebar tetap
-                        height: 100, // Tentukan tinggi tetap agar semua sama
+                        width: 80, // Lebar tetap
+                        height: 80, // Tinggi tetap
                         child: Image.asset(
                           food.image,
-                          fit: BoxFit
-                              .cover, // Ini penting agar gambar memenuhi kotak tanpa merusak aspek rasio
+                          fit: BoxFit.cover, // Memaksa gambar pas di kotak
                           errorBuilder: (context, error, stackTrace) =>
                               Container(
                                 color: Colors.black26,
@@ -105,10 +120,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       ),
                     ),
 
-                    // --- PERBAIKAN END ---
                     const SizedBox(width: 15),
 
-                    // Gunakan Expanded agar teks tidak mendorong layar ke kanan
+                    // Expanded agar teks tidak menabrak batas layar
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,14 +134,14 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                               color: Colors.white,
                               fontSize: 16,
                             ),
-                            maxLines: 2, // Mencegah teks terlalu panjang
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 5),
                           Text(
                             food.price,
                             style: const TextStyle(
-                              color: Color(0xFFD4AF37),
+                              color: Color(0xFFD4AF37), // Warna emas/kuning
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -135,8 +149,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       ),
                     ),
 
-                    // Bagian Tombol Tambah (Counter)
-                    // Ganti _buildQuantitySelector(food) dengan ini:
+                    // Bagian Tombol Counter (Tambah/Kurang)
                     qty == 0
                         ? IconButton(
                             onPressed: () => _updateCart(food, 1),
@@ -170,40 +183,71 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                 ),
                               ),
                             ],
-                          ), // Panggil fungsi counter Anda di sini
+                          ),
                   ],
                 ),
               );
             }, childCount: widget.restaurant.menu.length),
           ),
+
+          // Memberi jarak kosong di bawah agar list tidak tertutup tombol checkout
+          const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ),
-      // BAR KERANJANG (Akan muncul jika ada minimal satu makanan yang dipilih)
-      bottomNavigationBar: _cart.isNotEmpty
+
+      // --- 3. BAGIAN TOMBOL CHECKOUT (Dengan Async & Exception Handling) ---
+      bottomSheet: _cart.isNotEmpty
           ? Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               color: const Color(0xFF1E1E1E),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 55),
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CheckoutPage(cart: _cart), // MENGIRIM SELURUH KERANJANG
+                  backgroundColor: const Color(0xFFD4AF37), // Warna Emas
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+                // Penerapan Async dan Try-Catch
+                onPressed: () async {
+                  try {
+                    // Simulasi loading asinkron (misal: menyiapkan data)
+                    await Future.delayed(const Duration(milliseconds: 300));
+
+                    if (!mounted)
+                      return; // Mencegah error jika layar sudah ditutup
+
+                    // Navigasi ke halaman Checkout
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CheckoutPage(cart: _cart),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Gagal memproses pesanan: $e")),
+                    );
+                  }
+                },
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("${_cart.length} Menu Terpilih"),
-                    Text("Total: Rp $_totalPrice"),
+                    const Icon(Icons.shopping_bag, color: Colors.black),
+                    const SizedBox(width: 10),
+                    Text(
+                      "Checkout ($_totalItems item)",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   ],
                 ),
               ),
             )
-          : null,
+          : null, // Sembunyikan tombol jika keranjang kosong
     );
   }
 }

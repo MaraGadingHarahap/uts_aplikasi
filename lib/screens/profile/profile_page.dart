@@ -68,6 +68,67 @@ class ProfilePage extends StatelessWidget {
               "Notifikasi",
               () {},
             ),
+            ListTile(
+              leading: const Icon(
+                Icons.info_outline,
+                color: Colors.amber,
+              ), // Sesuaikan warna kuningnya
+              title: const Text(
+                "About App",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+              onTap: () {
+                // 2. Aksi memunculkan pop-up dialog saat diklik
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: const Color(
+                        0xFF1E1E1E,
+                      ), // Background gelap senada dengan tema aplikasi
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      title: const Row(
+                        children: [
+                          Icon(Icons.info, color: Colors.amber),
+                          SizedBox(width: 10),
+                          Text(
+                            "Tentang Aplikasi",
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      content: const Text(
+                        "Luxury Dining App v1.0.0\n\n"
+                        "Aplikasi pemesanan makanan eksklusif ini dirancang dan dikembangkan untuk memenuhi tugas proyek mata kuliah.\n\n"
+                        "Developer:\nHafizh Abi Tama",
+                        style: TextStyle(color: Colors.white70, height: 1.5),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Menutup dialog
+                          },
+                          child: const Text(
+                            "Tutup",
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+
             _buildProfileMenu(Icons.security_outlined, "Keamanan Akun", () {}),
             _buildProfileMenu(Icons.help_outline, "Pusat Bantuan", () {}),
             // Di dalam _buildProfileMenu pada ProfilePage

@@ -34,11 +34,24 @@ class NearbyRestaurantsWidget extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(8),
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      res.image, // res.image isinya harus 'assets/images/pizza.webp'
-                      fit: BoxFit.cover,
+                  leading: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    child: ClipOval(
+                      child: Image.asset(
+                        res.image,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[800],
+                            child: const Icon(
+                              Icons.restaurant,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                   title: Text(

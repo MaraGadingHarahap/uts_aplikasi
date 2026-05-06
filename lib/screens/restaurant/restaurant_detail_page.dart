@@ -47,12 +47,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             flexibleSpace: FlexibleSpaceBar(
               // PERBAIKAN: Menggunakan widget.restaurant.image
               background: Image.asset(
-                widget.restaurant.image,
+                widget.restaurant.image, 
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: Colors.grey[900],
-                  child: const Icon(Icons.broken_image, color: Colors.amber),
-                ),
+                errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[900], child: const Icon(Icons.broken_image, color: Colors.amber)),
               ),
             ),
           ),
@@ -64,71 +61,33 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E1E),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                decoration: BoxDecoration(color: const Color(0xFF1E1E1E), borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       // PERBAIKAN: Menggunakan food.image dari list menu
-                      child: Image.asset(
-                        food.image,
-                        width: 70,
-                        height: 70,
-                        fit: BoxFit.cover,
-                      ),
+                      child: Image.asset(food.image, width: 70, height: 70, fit: BoxFit.cover),
                     ),
                     const SizedBox(width: 15),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            food.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            food.price,
-                            style: const TextStyle(color: Color(0xFFD4AF37)),
-                          ),
+                          Text(food.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                          Text(food.price, style: const TextStyle(color: Color(0xFFD4AF37))),
                         ],
                       ),
                     ),
-                    qty == 0
-                        ? IconButton(
-                            onPressed: () => _updateCart(food, 1),
-                            icon: const Icon(
-                              Icons.add_circle_outline,
-                              color: Color(0xFFD4AF37),
-                            ),
-                          )
-                        : Row(
-                            children: [
-                              IconButton(
-                                onPressed: () => _updateCart(food, -1),
-                                icon: const Icon(
-                                  Icons.remove_circle_outline,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Text(
-                                "$qty",
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              IconButton(
-                                onPressed: () => _updateCart(food, 1),
-                                icon: const Icon(
-                                  Icons.add_circle,
-                                  color: Color(0xFFD4AF37),
-                                ),
-                              ),
-                            ],
-                          ),
+                    qty == 0 
+                      ? IconButton(onPressed: () => _updateCart(food, 1), icon: const Icon(Icons.add_circle_outline, color: Color(0xFFD4AF37)))
+                      : Row(
+                          children: [
+                            IconButton(onPressed: () => _updateCart(food, -1), icon: const Icon(Icons.remove_circle_outline, color: Colors.grey)),
+                            Text("$qty", style: const TextStyle(color: Colors.white)),
+                            IconButton(onPressed: () => _updateCart(food, 1), icon: const Icon(Icons.add_circle, color: Color(0xFFD4AF37))),
+                          ],
+                        ),
                   ],
                 ),
               );
@@ -136,30 +95,16 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           ),
         ],
       ),
-      bottomNavigationBar: _cart.isNotEmpty
+      bottomNavigationBar: _cart.isNotEmpty 
           ? Container(
               padding: const EdgeInsets.all(20),
               color: const Color(0xFF1E1E1E),
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD4AF37),
-                  minimumSize: const Size(double.infinity, 55),
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CheckoutPage(cart: _cart),
-                  ),
-                ),
-                child: Text(
-                  "Checkout (${_cart.length} Menu) - Rp $_totalPrice",
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD4AF37), minimumSize: const Size(double.infinity, 55)),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => CheckoutPage(cart: _cart))),
+                child: Text("Checkout (${_cart.length} Menu) - Rp $_totalPrice", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
               ),
-            )
+            ) 
           : null,
     );
   }
